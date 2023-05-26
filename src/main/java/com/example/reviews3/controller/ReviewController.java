@@ -18,7 +18,7 @@ public class ReviewController {
 	@PostMapping("/review")
 	public void uploadReview(@RequestParam("content")String content,
 							 @RequestParam("rating")Long rating,
-							 @RequestParam("imageFiles") List<MultipartFile> imageFiles){
+							 @RequestParam(value = "imageFiles", required = false) List<MultipartFile> imageFiles){
 		ReviewRequestDTO reviewRequestDTO = new ReviewRequestDTO();
 		reviewRequestDTO.setContent(content);
 		reviewRequestDTO.setRating(rating);
