@@ -6,9 +6,6 @@ import lombok.*;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 public class ReviewImageRequestDTO {
 	private String imgUrl;
 

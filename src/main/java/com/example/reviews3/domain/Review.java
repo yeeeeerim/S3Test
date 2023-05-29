@@ -16,8 +16,8 @@ public class Review {
 	@GeneratedValue
 	private Long id;
 	private String content;
-	private Long rating;
-	@OneToMany(mappedBy = "review")
+	private Float rating;
+	@OneToMany(mappedBy = "review" , cascade = CascadeType.ALL)
 	private List<Image> reviewImage;
 
 }

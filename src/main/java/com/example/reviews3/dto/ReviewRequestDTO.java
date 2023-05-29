@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 public class ReviewRequestDTO {
 	private String content;
-	private Long rating;
+	private Float rating;
 	private List<MultipartFile> image;
 
 	public Review toEntity(){

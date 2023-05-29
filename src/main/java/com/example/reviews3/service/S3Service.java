@@ -58,10 +58,11 @@ public class S3Service  {
 
 	// 먼저 파일 업로드시, 파일명을 난수화하기 위해 UUID 를 활용하여 난수를 돌린다.
 	public String createFileName(String fileName){
-		return UUID.randomUUID().toString().concat(getFileExtension(fileName));
+		return UUID.randomUUID().toString()+getFileExtension(fileName);
 	}
 
-	// file 형식이 잘못된 경우를 확인하기 위해 만들어진 로직이며, 파일 타입과 상관없이 업로드할 수 있게 하기위해, "."의 존재 유무만 판단하였습니다.
+
+	// file 형식이 잘못된 경우를 확인(Image파일만 가능)
 	private String getFileExtension(String fileName){
 			if (fileName.length() == 0) {
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 형식의 파일" + fileName + ") 입니다.");
@@ -77,7 +78,7 @@ public class S3Service  {
 		if (!fileValidate.contains(idxFileName)) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 형식의 파일" + fileName + ") 입니다.");
 		}
-		return fileName.substring(fileName.lastIndexOf("."));
+		return "_"+fileName;
 
 	}
 
