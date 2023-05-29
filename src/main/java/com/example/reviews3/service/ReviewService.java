@@ -63,4 +63,15 @@ public class ReviewService {
 		}
 		return reviewDetailResponseDTO;
 	}
+	@Transactional
+	public void deleteReview(Long reviewId){
+		Review review = reviewRepository.getReviewWithImages(reviewId);
+		List<Image> images = review.getReviewImage();
+		if (images != null && !images.isEmpty()) {
+			for (Image image : images) {
+				s3Service.deleteFile(image.getImgUrl());
+			}
+		}
+		reviewRepository.deleteById(reviewId);
+	}
 }

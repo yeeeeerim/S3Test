@@ -19,6 +19,8 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -33,12 +35,15 @@ public class S3Service  {
 
 	private final AmazonS3 amazonS3;
 
+	private final AmazonS3Client amazonS3Client;
+
 	public List<String> uploadFile(List<MultipartFile> multipartFiles){
 		List<String> fileNameList = new ArrayList<>();
 
 		// forEach 구문을 통해 multipartFiles 리스트로 넘어온 파일들을 순차적으로 fileNameList 에 추가
 		multipartFiles.forEach(file -> {
 			String fileName = createFileName(file.getOriginalFilename());
+
 			ObjectMetadata objectMetadata = new ObjectMetadata();
 			objectMetadata.setContentLength(file.getSize());
 			objectMetadata.setContentType(file.getContentType());
@@ -46,10 +51,12 @@ public class S3Service  {
 			try(InputStream inputStream = file.getInputStream()){
 				amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
 						.withCannedAcl(CannedAccessControlList.PublicRead));
+				String fileUri = URLDecoder.decode(amazonS3Client.getUrl(bucket, fileName).toString(), StandardCharsets.UTF_8);
+				fileNameList.add(fileUri);
 			} catch (IOException e){
 				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
 			}
-			fileNameList.add(fileName);
+
 
 		});
 
@@ -84,7 +91,7 @@ public class S3Service  {
 
 
 	public void deleteFile(String fileName){
-		amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
+		amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName.split("/")[3]));
 		System.out.println(bucket);
 	}
 }
